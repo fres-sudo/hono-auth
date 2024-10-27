@@ -1,9 +1,9 @@
 import type { Config } from "drizzle-kit";
-import { config } from "./src/types/config";
+import { config } from "./src/types/config.type";
 
 export default {
   out: "./src/infrastructure/database/migrations",
-  schema: "./src/tables/*.table.ts",
+  schema: "./src/infrastracture/database/tables/index.ts",
   breakpoints: false,
   strict: true,
   dialect: "postgresql",

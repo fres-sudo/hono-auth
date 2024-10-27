@@ -1,9 +1,28 @@
-import { Hono } from 'hono'
+import "reflect-metadata";
+import { Hono } from "hono";
+import { container } from "tsyringe";
+import { AuthController } from "./controllers/auth.controller";
+import { logger } from "hono/logger";
+import { cors } from "hono/cors";
 
-const app = new Hono()
+/* ----------------------------------- Api ---------------------------------- */
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+const app = new Hono().basePath("/api");
 
-export default app
+/* --------------------------------- Middleware --------------------------------- */
+
+app.use(logger());
+
+/* --------------------------------- Routes --------------------------------- */
+
+const authRoutes = container.resolve(AuthController).routes();
+
+app.route("/auth", authRoutes);
+
+app.get("/", (c) => {
+  return c.text("Hello Hono!");
+});
+
+/* -----------------------------------Exports----------------------------------*/
+
+export default app;

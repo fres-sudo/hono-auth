@@ -1,11 +1,18 @@
 {
   "name": "hono-auth",
   "scripts": {
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio --verbose",
     "dev": "bun run --hot src/index.ts",
+    "initialize": "bun install && docker-compose up --no-recreate -d && bun db:push",
     "docker:up": "docker-compose up -d",
     "docker:build": "docker-compose up -d --build"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.4.1",
+    "@paralleldrive/cuid2": "^2.2.2",
     "arctic": "^2.0.1",
     "drizzle-kit": "^0.26.2",
     "drizzle-orm": "^0.35.3",
@@ -13,11 +20,13 @@
     "hono": "^4.6.3",
     "hono-rate-limiter": "^0.4.0",
     "nodemailer": "^6.9.15",
+    "oslo": "^1.2.1",
     "postgres": "^3.4.5",
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.8.0",
     "typescript": "^5.6.3",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zod-validator": "^1.0.1"
   },
   "devDependencies": {
     "@types/bun": "latest"

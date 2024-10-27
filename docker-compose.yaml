@@ -4,7 +4,7 @@ services:
     build:
       dockerfile: Dockerfile
     depends_on:
-      - db
+      - postgres
     env_file:
       - .env
     ports:
@@ -12,7 +12,7 @@ services:
     restart: always
     networks:
       - app-network
-  db:
+  postgres:
     container_name: db
     image: postgres:latest
     environment:
