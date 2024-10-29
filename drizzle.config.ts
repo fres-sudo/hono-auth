@@ -3,12 +3,12 @@ import { config } from "./src/types/config.type";
 
 export default {
   out: "./src/infrastructure/database/migrations",
-  schema: "./src/infrastracture/database/tables/index.ts",
+  schema: "./src/infrastructure/database/tables/index.ts",
   breakpoints: false,
   strict: true,
   dialect: "postgresql",
   dbCredentials: {
-    url: config.postgres.url,
+    url: config.postgres.localUrl,
   },
   migrations: {
     table: "migrations",

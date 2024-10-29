@@ -2,9 +2,9 @@ import { inject, injectable } from "tsyringe";
 import type { Repository } from "../interfaces/repository.interface";
 import { eq, type InferInsertModel } from "drizzle-orm";
 import { DatabaseProvider } from "../providers/database.provider";
-import { usersTable } from "../infrastracture/database/tables";
-import { takeFirstOrThrow } from "../infrastracture/database/utils";
 import { BadRequest } from "../common/error";
+import { usersTable } from "../infrastructure/database/tables";
+import { takeFirstOrThrow } from "../infrastructure/database/utils";
 
 export type CreateUser = InferInsertModel<typeof usersTable>;
 export type UpdateUser = Partial<CreateUser>;

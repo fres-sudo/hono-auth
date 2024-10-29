@@ -7,33 +7,33 @@ import { loginDTO } from "../dtos/login.dto";
 import { signUpDTO } from "../dtos/signup.dto";
 import { AuthService } from "../services/auth.service";
 import { limiter } from "../middlewares/limiter.middleware";
-import { db } from "../infrastracture/database";
+import { refreshTokenDTO } from "../dtos/refresh-token.dto";
+import { RefreshTokenService } from "../services/refresh-token.service";
+import { EmailVerificationsService } from "../services/email-verification.service";
 
 @injectable()
 export class AuthController implements Controller {
   controller = new Hono<HonoTypes>();
 
-  constructor(@inject(AuthService) private readonly authService: AuthService) {}
+  constructor(
+    @inject(AuthService) private readonly authService: AuthService,
+    @inject(RefreshTokenService)
+    private readonly refreshTokenService: RefreshTokenService,
+    @inject(EmailVerificationsService)
+    private readonly emailVerificationsService: EmailVerificationsService,
+  ) {}
 
   routes() {
     return this.controller
-      .get("/me", async (context) => {
-        try {
-          const user = await db.query.usersTable.findFirst();
-          console.log({ user });
-          return context.json(user);
-        } catch (e) {
-          console.log({ e });
-        }
-      })
       .post(
         "/login",
         zValidator("json", loginDTO),
         limiter({ limit: 10, minutes: 60 }),
         async (context) => {
           const body = context.req.valid("json");
-          const user = await this.authService.login(body);
-          return context.json(user);
+          const { user, accessToken, refreshToken } =
+            await this.authService.login(body);
+          return context.json({ user, accessToken, refreshToken });
         },
       )
       .post(
@@ -44,6 +44,32 @@ export class AuthController implements Controller {
           const data = context.req.valid("json");
           const newUser = await this.authService.signup(data);
           return context.json(newUser);
+        },
+      )
+      .post(
+        "/refresh-token",
+        zValidator("json", refreshTokenDTO),
+        limiter({ limit: 10, minutes: 60 }),
+        async (context) => {
+          const refreshTokenBody = context.req.valid("json");
+          const { accessToken, refreshToken } =
+            await this.refreshTokenService.refreshToken(
+              refreshTokenBody.refreshToken,
+            );
+          return context.json({ accessToken, refreshToken });
+        },
+      )
+      .get(
+        "/verify/:userId/:token",
+        limiter({ limit: 10, minutes: 60 }),
+        async (context) => {
+          const { userId, token } = context.req.param();
+          await this.emailVerificationsService.processEmailVerificationRequest(
+            userId,
+            token,
+          );
+          // display or return something to the user
+          return context.html(`<h1>Email verified!</h1>`);
         },
       );
   }

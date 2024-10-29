@@ -1,5 +1,5 @@
 import { container } from "tsyringe";
-import { db } from "../infrastracture/database";
+import { db } from "../infrastructure/database";
 
 // Symbol
 export const DatabaseProvider = Symbol("DATABASE_TOKEN");

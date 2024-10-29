@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { usersTable } from "./../infrastracture/database/tables";
+import { usersTable } from "./../infrastructure/database/tables";
 
 export const signUpDTO = createInsertSchema(usersTable)
   .extend({
