@@ -2,71 +2,134 @@
 
 # How to spin up a Hono Authentication System 🔐
 
-**Table of content**
-
-- [Introduction ](#introduction)
-  - [Functionalities](#functionalities)
-  - [Technologies](#technologies)
-  - [Architecture Overview](#architecture-overview)
-    - [Folder Structure](#folder-structure)
-    - [File Naming](#file-naming)
-  - [Why?](#why)
-  - [Who?](#who)
-  - [Where?](#where)
-- [Getting Started](#getting-started)
-  - [Dependencies](#dependencies)
-  - [Setup](#setup)
-    - [Docker Setup](#docker-setup)
-      - [Dockerfile](#dockerfile)
-      - [Docker Compose](#docker-compose)
-    - [Drizzle Setup](#drizzle-setup)
-      - [Setup Env variables](#setup-env-variables)
-        - [Configuration File](#configuration-file)
-      - [Drizzle Configuration](#drizzle-configuration)
-      - [Drizzle Entry Point](#drizzle-entry-point)
-  - [Dipendence Injection Setup](#dipendence-injection-setup)
-- [Email and password authentication](#email-and-password-authentication)
-  - [Defining routes](#defining-routes)
-    - [Zod DTOs Validation](#zod-dtos-validation)
-    - [Users Table](#users-table)
-    - [Limiter Middleware](#limiter-middleware)
-    - [Login and Signup Service](#login-and-signup-service)
-    - [Error Handling](#error-handling)
-    - [Hashing Service](#hashing-service)
-    - [User Repository](#user-repository)
-      - [Database Provider](#database-provider)
-      - [User Repository Implementation](#user-repository-implementation)
-    - [Starting Docker and Testing](#starting-docker-and-testing)
-- [JWT Access and Refresh Token System](#jwt-access-and-refresh-token-system)
-  - [What is it?](#what-is-it)
-  - [How it works?](#how-it-works)
-  - [Defining Routes](#defining-routes-1)
-  - [Refresh Token DTO](#refresh-token-dto)
-  - [Refresh Token Service](#refresh-token-service)
-  - [Refresh Token Repository](#refresh-token-repository)
-    - [Sessions Table](#sessions-table)
-  - [Authentication Middleware](#authentication-middleware)
-  - [Update Login Flow](#update-login-flow)
-  - [Testing the endpoints](#testing-the-endpoints)
-- [Email Verification](#email-verification)
-  - [Defining Routes](#defining-routes-2)
-  - [Email Verification Service](#email-verification-service)
-    - [Token Service](#token-service)
-    - [Mailer Service](#mailer-service)
-    - [Email Templates](#email-templates)
-  - [Email Verifications Repository](#email-verifications-repository)
-  - [Email Verifications Table](#email-verifications-table)
-  - [Users Table](#users-table-1)
-- [Forgot password, OTP code verification, Reset password](#forgot-password-otp-code-verification-reset-password)
-  - [What is it?](#what-is-it-1)
-  - [How it works?](#how-it-works-1)
-  - [Defining routes](#defining-routes-3)
-    - [Password Reset DTO](#password-reset-dto)
-  - [Password Reset Service](#password-reset-service)
-  - [Password Reset Repository](#password-reset-repository)
-- [Conclusion](#conclusion)
-  - [What do to now?](#what-do-to-now)
-  - [Resources](#resources)
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#introduction">Introduction</a>
+      <ul>
+        <li><a href="#functionalities">Functionalities</a></li>
+        <li><a href="#technologies">Technologies</a></li>
+        <li>
+          <a href="#architecture-overview">Architecture Overview</a>
+          <ul>
+            <li><a href="#folder-structure">Folder Structure</a></li>
+            <li><a href="#file-naming">File Naming</a></li>
+          </ul>
+        </li>
+        <li><a href="#why">Why?</a></li>
+        <li><a href="#who">Who?</a></li>
+        <li><a href="#where">Where?</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#dependencies">Dependencies</a></li>
+        <li>
+          <a href="#setup">Setup</a>
+          <ul>
+            <li>
+              <a href="#docker-setup">Docker Setup</a>
+              <ul>
+                <li><a href="#dockerfile">Dockerfile</a></li>
+                <li><a href="#docker-compose">Docker Compose</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#drizzle-setup">Drizzle Setup</a>
+              <ul>
+                <li>
+                  <a href="#setup-env-variables">Setup Env variables</a>
+                  <ul>
+                    <li><a href="#configuration-file">Configuration File</a></li>
+                  </ul>
+                </li>
+                <li><a href="#drizzle-configuration">Drizzle Configuration</a></li>
+                <li><a href="#drizzle-entry-point">Drizzle Entry Point</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#dipendence-injection-setup">Dependence Injection Setup</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#email-and-password-authentication">Email and Password Authentication</a>
+      <ul>
+        <li>
+          <a href="#defining-routes">Defining Routes</a>
+          <ul>
+            <li><a href="#zod-dtos-validation">Zod DTOs Validation</a></li>
+            <li><a href="#users-table">Users Table</a></li>
+            <li><a href="#limiter-middleware">Limiter Middleware</a></li>
+            <li><a href="#login-and-signup-service">Login and Signup Service</a></li>
+            <li><a href="#error-handling">Error Handling</a></li>
+            <li><a href="#hashing-service">Hashing Service</a></li>
+            <li>
+              <a href="#user-repository">User Repository</a>
+              <ul>
+                <li><a href="#database-provider">Database Provider</a></li>
+                <li><a href="#user-repository-implementation">User Repository Implementation</a></li>
+              </ul>
+            </li>
+            <li><a href="#starting-docker-and-testing">Starting Docker and Testing</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a href="#jwt-access-and-refresh-token-system">JWT Access and Refresh Token System</a>
+      <ul>
+        <li><a href="#what-is-it">What is it?</a></li>
+        <li><a href="#how-it-works">How it works?</a></li>
+        <li><a href="#defining-routes-1">Defining Routes</a></li>
+        <li><a href="#refresh-token-dto">Refresh Token DTO</a></li>
+        <li><a href="#refresh-token-service">Refresh Token Service</a></li>
+        <li><a href="#refresh-token-repository">Refresh Token Repository</a></li>
+        <li><a href="#sessions-table">Sessions Table</a></li>
+        <li><a href="#authentication-middleware">Authentication Middleware</a></li>
+        <li><a href="#update-login-flow">Update Login Flow</a></li>
+        <li><a href="#testing-the-endpoints">Testing the Endpoints</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#email-verification">Email Verification</a>
+      <ul>
+        <li><a href="#defining-routes-2">Defining Routes</a></li>
+        <li><a href="#email-verification-service">Email Verification Service</a></li>
+        <li>
+          <a href="#token-service">Token Service</a>
+          <ul>
+            <li><a href="#mailer-service">Mailer Service</a></li>
+            <li><a href="#email-templates">Email Templates</a></li>
+          </ul>
+        </li>
+        <li><a href="#email-verifications-repository">Email Verifications Repository</a></li>
+        <li><a href="#email-verifications-table">Email Verifications Table</a></li>
+        <li><a href="#users-table-1">Users Table</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#forgot-password-otp-code-verification-reset-password">Forgot Password, OTP Code Verification, Reset Password</a>
+      <ul>
+        <li><a href="#what-is-it-1">What is it?</a></li>
+        <li><a href="#how-it-works-1">How it works?</a></li>
+        <li><a href="#defining-routes-3">Defining Routes</a></li>
+        <li><a href="#password-reset-dto">Password Reset DTO</a></li>
+        <li><a href="#password-reset-service">Password Reset Service</a></li>
+        <li><a href="#password-reset-repository">Password Reset Repository</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#conclusion">Conclusion</a>
+      <ul>
+        <li><a href="#what-do-to-now">What to do now?</a></li>
+        <li><a href="#resources">Resources</a></li>
+      </ul>
+    </li>
+  </ol>
+</details>
 
 <!-- TOC --><a name="introduction"></a>
 
